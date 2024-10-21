@@ -1,21 +1,22 @@
+
 let pageCounter = 1;
 let animalContainer = document.getElementById("animal-info");
 let btn = document.getElementById("btn");
 
-btn.addEventListener("click", function() {
+btn.addEventListener("click", function () {
   let ourRequest = new XMLHttpRequest();
   ourRequest.open('GET', 'https://learnwebcode.github.io/json-example/animals-' + pageCounter + '.json');
-  ourRequest.onload = function() {
+  ourRequest.onload = function () {
     if (ourRequest.status >= 200 && ourRequest.status < 400) {
       let ourData = JSON.parse(ourRequest.responseText);
       renderHTML(ourData);
     } else {
       console.log("We connected to the server, but it returned an error.");
     }
-    
+
   };
 
-  ourRequest.onerror = function() {
+  ourRequest.onerror = function () {
     console.log("Connection error");
   };
 
@@ -27,31 +28,33 @@ btn.addEventListener("click", function() {
 });
 
 function renderHTML(data) {
-    var htmlString = "";
-  
-    for (i = 0; i < data.length; i++) {
-      htmlString += "<p>" + data[i].name + " is a " + data[i].species + " that likes to eat ";
-      
-      for (ii = 0; ii < data[i].foods.likes.length; ii++) {
-        if (ii == 0) {
-          htmlString += data[i].foods.likes[ii];
-        } else {
-          htmlString += " and " + data[i].foods.likes[ii];
-        }
+  var htmlString = "";
+
+  for (i = 0; i < data.length; i++) {
+    htmlString += "<p>" + data[i].name + " is a " + data[i].species + " that likes to eat ";
+
+    for (ii = 0; ii < data[i].foods.likes.length; ii++) {
+      if (ii == 0) {
+        htmlString += data[i].foods.likes[ii];
+      } else {
+        htmlString += " and " + data[i].foods.likes[ii];
       }
+    }
 
-      htmString += ' and dislikes ';
+    htmlString += ' and dislikes ';
 
-      for(ii = 0, ii < data[i].food.dislikes.length;i++) {
-        if(ii == 0){
-            htmlString += data[i].food.dislikes[ii];
-        }else {
-            htmlString += " and " + data[i].food.dislikes[ii];
-        }
+    for (ii = 0; ii < data[i].foods.dislikes.length; ii++) {
+      if (ii == 0) {
+        htmlString += data[i].foods.dislikes[ii];
+      } else {
+        htmlString += " and " + data[i].foods.dislikes[ii];
+      }
     }
 
     htmlString += '.</p>';
-      }
+  }
 
-      animalContainer.insertAdjacentElement('beforeend', htmlString);
-    }
+  animalContainer.insertAdjacentHTML('beforeend', htmlString);
+}
+
+
