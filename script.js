@@ -1,58 +1,57 @@
-let pageCounter = 1;
-let animalContainer = document.getElementById("animal-info");
-let btn = document.getElementById("btn");
+$(document).ready(function () {
+  let pageCounter = 1;
+  let animalContainer = $("#animal-info");
+  let btn = $("#btn");
 
-btn.addEventListener("click", function () {
-    let ourRequest = new XMLHttpRequest();
-    ourRequest.open('GET', 'https://learnwebcode.github.io/json-example/animals-' + pageCounter + '.json');
-    ourRequest.onload = function () {
-        if (ourRequest.status >= 200 && ourRequest.status < 400) {
-            var ourData = JSON.parse(ourRequest.responseText);
-            renderHTML(ourData);
-        } else {
-            console.log("We connected to the server, but it returned an error.");
-        }
+  btn.on("click", function () {
+    $.ajax({
+      url:
+        "https://learnwebcode.github.io/json-example/animals-" +
+        pageCounter +
+        ".json",
+      method: "GET",
+      success: function (data) {
+        renderHTML(data);
+      },
+      error: function () {
+        console.log("We connected to the server, but it returned an error.");
+      },
+    });
 
-    };
-
-    ourRequest.onerror = function () {
-        console.log("Connection error");
-    };
-
-    ourRequest.send();
     pageCounter++;
     if (pageCounter > 3) {
-        btn.classList.add("hide-me");
+      btn.addClass("hide-me");
     }
-});
+  });
 
-function renderHTML(data) {
+  function renderHTML(data) {
     let htmlString = "";
 
-    for (i = 0; i < data.length; i++) {
-        htmlString += "<p>" + data[i].name + " is a " + data[i].species + " that likes to eat ";
+    $.each(data, function (i, animal) {
+      htmlString +=
+        "<p>" + animal.name + " is a " + animal.species + " that likes to eat ";
 
-        for (ii = 0; ii < data[i].foods.likes.length; ii++) {
-            if (ii == 0) {
-                htmlString += data[i].foods.likes[ii];
-            } else {
-                htmlString += " and " + data[i].foods.likes[ii];
-            }
+      $.each(animal.foods.likes, function (ii, like) {
+        if (ii === 0) {
+          htmlString += like;
+        } else {
+          htmlString += " and " + like;
         }
+      });
 
-        htmlString += ' and dislikes ';
+      htmlString += " and dislikes ";
 
-        for (ii = 0; ii < data[i].foods.dislikes.length; ii++) {
-            if (ii == 0) {
-                htmlString += data[i].foods.dislikes[ii];
-            } else {
-                htmlString += " and " + data[i].foods.dislikes[ii];
-            }
+      $.each(animal.foods.dislikes, function (ii, dislike) {
+        if (ii === 0) {
+          htmlString += dislike;
+        } else {
+          htmlString += " and " + dislike;
         }
+      });
 
-        htmlString += '.</p>';
+      htmlString += ".</p>";
+    });
 
-    }
-
-    animalContainer.insertAdjacentHTML('beforeend', htmlString);
-}
+    animalContainer.append(htmlString);
+  }
+});
